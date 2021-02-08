@@ -1,0 +1,37 @@
+name: "Modern CMake Buildsystem"
+description: "Builds, tests, and optionally installs a modern CMake project."
+inputs:
+  path-to-source:
+    description: "The top-level directory containing source files provided by the project."
+    required: false
+    default: "${{ github.workspace }}"
+  path-to-build:
+    description: "The top-level directory in which buildsystem files and build output artifacts are to be stored."
+    required: false
+    default: "${{ github.workspace }}/build"
+  generate-options:
+    description: "Options to generate a project buildsystem other than `-S` and `-B`."
+    required: false
+  build-options:
+    description: "Options to build a project other than `--build`."
+    required: false
+  test-options:
+    description: "Options to test a project."
+    required: false
+  install:
+    description: "Set to `true` to install the project. Requires CMake 3.15."
+    required: false
+  install-options:
+    description: "Options to install a project other than `--install`."
+    required: false
+runs:
+  using: "composite"
+  steps:
+    - shell: bash
+      run: |
+        cmake ${{ inputs.generate-options }} -S ${{ inputs.path-to-source }} -B ${{ inputs.path-to-build }}
+        cmake --build ${{ inputs.path-to-build }} ${{ inputs.build-options }}
+        cmake -E chdir ${{ inputs.path-to-build }} ctest ${{ inputs.test-options }}
+        if [[ "${{ inputs.install }}" == true ]]; then
+          cmake --install ${{ inputs.path-to-build }} ${{ inputs.install-options }}
+        fi
