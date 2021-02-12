@@ -38,10 +38,10 @@ though it may do so indirectly through the CMake commands.
 ```yml
 on: push
 jobs:
-  gcc-trunk:
+  gcc-snapshot:
     runs-on: ubuntu-latest
     steps:
-      - uses: johelegp/latest-gcc-snapshot@v1
+      - uses: johelegp/gcc-snapshot@v1
       - uses: actions/checkout@v2
       - uses: johelegp/modern-cmake-buildsystem@v1 # This action.
         with:
